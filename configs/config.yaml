@@ -1,0 +1,57 @@
+proxy:
+  secretToken: ""
+
+hub:
+  cookieSecret: ""
+  service:
+    loadBalancerIP: 10.0.0.128
+
+auth:
+  type: dummy
+  dummy:
+    password: ''
+  whitelist:
+    users:
+      - IUNItester
+      - 2ndTester
+
+auth:
+  admin:
+    users:
+      - IUNItester
+
+prePuller:
+  hook:
+    enabled: false
+
+cull:
+  enabled: false        
+
+hub:
+  extraConfig: |
+    c.JupyterHub.allow_named_servers = True
+    c.DockerSpawner.extra_create_kwargs = {"command": 'env PATH="/opt/conda/bin:$PATH" /usr/local/bin/start-singleuser.sh'}
+
+singleuser:
+  image:
+   name: jupyter/datascience-notebook
+   tag: 4cdbc9cdb7d1
+  profileList:
+    - display_name: "Datascience environment"
+      description: "To avoid too much bells and whistles: Python, R, and Julia."
+      default: true
+    - display_name: "Datascience environment with RStudio and Java"
+      description: "If you want the additional bells and whistles: Python, R, RStudio, Java and Julia."
+      kubespawner_override:
+        image: everyxs/cadre-iuni-2dcadre-2dreproducibilitydemo-251eaf:e3591483832887728ca339e02278aaafd04ba50b  
+  storage:
+    type: "static"
+    static:
+      pvcName: "efs"
+      subPath: "home"
+      homeMountPath: "home"
+  extraEnv:
+      CHOWN_HOME: "yes"
+  uid: 0
+  fsGid: 0
+  cmd: "start-singleuser.sh"       

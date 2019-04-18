@@ -1,0 +1,57 @@
+apiVersion: kops/v1alpha2
+kind: Cluster
+metadata:
+  creationTimestamp: 2019-03-28T19:41:23Z
+  name: cadre-jhub.k8s.local
+spec:
+  api:
+    loadBalancer:
+      type: Public
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  configBase: s3://cadre-jhub-conf/cadre-jhub.k8s.local
+  etcdClusters:
+  - etcdMembers:
+    - instanceGroup: master-us-east-2a
+      name: a
+    name: main
+  - etcdMembers:
+    - instanceGroup: master-us-east-2a
+      name: a
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubelet:
+    anonymousAuth: false
+  kubernetesApiAccess:
+  - 0.0.0.0/0
+  kubernetesVersion: 1.11.8
+  masterPublicName: api.cadre-jhub.k8s.local
+  networkCIDR: 10.0.0.0/16
+  networkID: vpc-08904096cdb37fdf0
+  networking:
+    kubenet: {}
+  nonMasqueradeCIDR: 100.64.0.0/10
+  sshAccess:
+  - 0.0.0.0/0
+  subnets:
+  - cidr: 10.0.32.0/19
+    name: us-east-2a
+    type: Public
+    zone: us-east-2a
+  - cidr: 10.0.128.0/19
+    name: us-east-2b
+    type: Public
+    zone: us-east-2b
+  - cidr: 10.0.96.0/19
+    name: us-east-2c
+    type: Public
+    zone: us-east-2c
+  topology:
+    dns:
+      type: Public
+    masters: public
+    nodes: public

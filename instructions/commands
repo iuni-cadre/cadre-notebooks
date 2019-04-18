@@ -1,0 +1,47 @@
+kubectl --namespace=jhub get svc proxy-public
+show pods and services
+======================
+kubectl --namespace=jhub get pod
+kubectl --namespace=jhub get service
+
+Update the cluster after config changes
+======================================
+helm upgrade --install $RELEASE jupyterhub/jupyterhub   --namespace $NAMESPACE    --version=0.8.0   --values config.yaml
+
+Access through API
+====================
+curl -X GET -H "Authorization: token 48beeee2dfda4ddaa6dee4b6b36cc75b" "http://abea6237e450611e9938e0200df19c19-1014441238.us-east-2.elb.amazonaws.com/hub/api/users"
+
+curl -X POST -d '{"username":"IUNITester", "password":"***"}' "http://abea6237e450611e9938e0200df19c19-1014441238.us-east-2.elb.amazonaws.com/hub/api/authorizations/token"
+
+Deleting pods
+================
+kubectl delete pod -n jhub user-placeholder-0
+kubectl delete pod -n jhub --all
+
+Pod logs
+===========
+kubectl --namespace=jhub logs hub-5ffc8684b9-b7tcm
+
+
+kubectl describe pod tiller-deploy -n kube-system
+kubectl get deploy -n kube-system
+kubectl get node -n kube-system
+
+connect to hub as docker image
+=============================
+kubectl -n jhub exec -it hub-5c4bdbbf55-5fxb2 -- /bin/bash
+
+kubernates dashboard
+=====================
+1. create token
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep kubernetes-dashboard | awk '{print $1}')
+2. start kubernates dashboard
+kubectl proxy
+3. ssh tunneling to kubernates dashboard
+ssh -N -L 8001:127.0.0.1:8001 -i jupyterhub-k8s.pem ubuntu@ec2-52-14-91-121.us-east-2.compute.amazonaws.com
+
+login to kubernates master node
+================================
+kops create secret — name ${NAME} sshpublickey admin -i ~/.ssh/id_rsa.pub
+
