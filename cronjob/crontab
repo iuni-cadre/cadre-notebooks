@@ -1,0 +1,4 @@
+MAILTO=cpelikan@iu.edu
+
+# run every 5 mins to sync s3 location with EFS
+*/5 * * * * /home/ubuntu/aws_sync.sh | logger -t aws_sync.sh
