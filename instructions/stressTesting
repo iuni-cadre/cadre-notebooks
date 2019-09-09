@@ -1,7 +1,7 @@
-Following https://github.com/giantswarm/kube-stresscheck
+https://github.com/kubernetes/kubernetes/tree/master/test/images/resource-consumer
 
 kubectl run resource-consumer --image=gcr.io/kubernetes-e2e-test-images/resource-consumer:1.4 --expose --service-overrides='{ "spec": { "type": "LoadBalancer" } }' --port 8080 --requests='cpu=1000m,memory=2560Mi'
-Scale the deployoment to 30 copies
-kubectl scale --replicas=30 deployment/resource-consumer
+Scale the deployoment to 20 copies
+kubectl scale --replicas=20 deployment/resource-consumer
 
-For better auto-scalign instructions, follow https://kubernetes.io/blog/2016/07/autoscaling-in-kubernetes/
+For honrizontal Pod auto-scalign instructions, follow https://kubernetes.io/blog/2016/07/autoscaling-in-kubernetes/
