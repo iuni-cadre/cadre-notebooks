@@ -1,0 +1,20 @@
+export NAME=cadre-jhub2.k8s.local
+export KOPS_STATE_STORE=s3://cadre-jupyter-config-vpc2
+
+kops create cluster cadre-jhub2.k8s.local \
+  --node-count 2 \
+  --zones $ZONES \
+  --ssh-public-key ~/.ssh/id_rsa.pub \
+  --vpc vpc-09300fa801cdbad2e \
+  --associate-public-ip=false \
+  --node-size m4.xlarge \
+  --master-size m4.large \
+  --networking weave \
+  --topology private \
+  --yes
+  
+  If you get network CIDR conficts when creating the cluster, follow https://blenderfox.com/2018/01/05/guide-to-creating-a-kubernetes-cluster-in-existing-subnets-vpc-on-aws-with-kops/
+  
+ Adding bastian 
+ https://github.com/kubernetes/kops/blob/master/docs/examples/kops-tests-private-net-bastion-host.md#adding-a-bastion-host-to-our-cluster
+
