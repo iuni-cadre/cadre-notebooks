@@ -57,7 +57,8 @@ Adding more nodes to the cluster
 Auto scaling kubernates in AWS
 ===============================
 1. Follow instructions in https://medium.com/@thnery/kubernetes-cluster-autoscaler-on-aws-f8e2a3fad27e
-helm install stable/cluster-autoscaler --name cluster-autoscaler --set "autoscalingGroups[0].name=nodes.cadre-jhub.k8s.local,autoscalingGroups[0].maxSize=24,autoscalingGroups[0].minSize=6" --set rbac.create=true --set awsRegion=us-east-2
-3. Go to kubenetes dashboard and select kube-system namespace and see whether auto-scaling pod started without errors
+helm install stable/cluster-autoscaler --name cluster-autoscaler --namespace default --set "autoscalingGroups[0].name=nodes.jupyter.east2.k8s.local,autoscalingGroups[0].maxSize=24,autoscalingGroups[0].minSize=4" --set rbac.create=true --set awsRegion=us-east-2
+2. Go to kubenetes dashboard and select kube-system namespace and see whether auto-scaling pod started without errors
+3. cluster-autoscaler should be in default namespace.
 
 
