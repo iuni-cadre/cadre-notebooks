@@ -8,4 +8,7 @@ https://zero-to-jupyterhub.readthedocs.io/en/latest/amazon/efs_storage.html#amaz
 config.yaml
 https://zero-to-jupyterhub.readthedocs.io/en/stable/resources/reference.html
 
-
+Adding bastion
+https://github.com/kubernetes/kops/blob/master/docs/examples/kops-tests-private-net-bastion-host.md#adding-a-bastion-host-to-our-cluster
+  command : kops create instancegroup bastions --role Bastion --subnet utility-us-east-2a
+  
