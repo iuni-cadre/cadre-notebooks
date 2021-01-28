@@ -1,10 +1,15 @@
 proxy:
-  secretToken: ""
+  secretToken: "034270dbea6027b41df3485b40157e9aad45f2ee10f264aec896cd46ef51d9ad"
 
 hub:
-  cookieSecret: ""
+  cookieSecret: "e83c19ff895bf91adea7bf74b05120e9d18cbcd2e32c733436129e2d8b2b7cf2"
+  baseUrl: "/jupyter/"
   service:
-    loadBalancerIP: 10.0.0.128
+    loadBalancerIP: 10.0.1.226
+  extraConfig:
+    first-config: |# some code
+      c.JupyterHub.allow_named_servers = True
+      c.JupyterHub.bind_url = 'http://aa126f681c04448aea9d0ca069ec5f25-770644020.us-east-2.elb.amazonaws.com/jupyter/'
 
 auth:
   type: dummy
@@ -21,37 +26,49 @@ auth:
       - IUNItester
 
 prePuller:
-  hook:
-    enabled: false
+  continuous:
+    enabled: true
 
 cull:
-  enabled: false        
-
-hub:
-  extraConfig: |
-    c.JupyterHub.allow_named_servers = True
-    c.DockerSpawner.extra_create_kwargs = {"command": 'env PATH="/opt/conda/bin:$PATH" /usr/local/bin/start-singleuser.sh'}
+  enabled: true
+  timeout: 1800
+  every: 300
 
 singleuser:
+  defaultUrl: "/lab"
   image:
-   name: jupyter/datascience-notebook
-   tag: 4cdbc9cdb7d1
+   name: everyxs/issi-cadre-jupyter
+   tag: version0.99
   profileList:
     - display_name: "Datascience environment"
       description: "To avoid too much bells and whistles: Python, R, and Julia."
       default: true
-    - display_name: "Datascience environment with RStudio and Java"
-      description: "If you want the additional bells and whistles: Python, R, RStudio, Java and Julia."
+    - display_name: "Spark environment"
+      description: "Includes Python, R, and Scala support for Apache Spark, optionally on Mesos."
       kubespawner_override:
-        image: everyxs/cadre-iuni-2dcadre-2dreproducibilitydemo-251eaf:e3591483832887728ca339e02278aaafd04ba50b  
+        image: jupyter/datascience-notebook:3b1f4f5e6cc1
+  cpu:
+    limit: .5
+    guarantee: .5
+  memory:
+    limit: 1G
+    guarantee: 1G
+  lifecycleHooks:
+    postStart:
+      exec:
+        command:
+          - "sh"
+          - "-c"
+          - >
+            gitpuller https://github.com/iuni-cadre/BetaDemoCode master BetaDemoCode;
+            chown -R jovyan:users ~/BetaDemoCode;
   storage:
     type: "static"
     static:
       pvcName: "efs"
-      subPath: "home"
-      homeMountPath: "home"
+      subPath: "home/cadre-query-results/{username}"
   extraEnv:
-      CHOWN_HOME: "yes"
+    CHOWN_HOME: "yes"
   uid: 0
   fsGid: 0
-  cmd: "start-singleuser.sh"       
+  cmd: "start-singleuser.sh"
