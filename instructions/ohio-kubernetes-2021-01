@@ -1,4 +1,52 @@
 export NAME=jhub-ohio.k8s.local
 export KOPS_STATE_STORE=s3://cadre-jhub-ohio-config
 
-kops create cluster --cloud aws --name $NAME --state $KOPS_STATE_STORE --node-count 2 --zones "$ZONES" --authorization RBAC --node-size m4.xlarge --master-size m4.large --ssh-public-key ~/.ssh/id_rsa.pub --topology=private --networking=weave --associate-public-ip=false --vpc vpc-05a34590a22917f9f --node-volume-size 128 --yes
+kops create cluster --cloud aws --name $NAME --state $KOPS_STATE_STORE --node-count 2 --zones "us-east-2a" --authorization RBAC --node-size m4.xlarge --master-size m4.large --ssh-public-key ~/.ssh/id_rsa.pub --topology=private --networking=weave --associate-public-ip=false --vpc vpc-05a34590a22917f9f --node-volume-size 128 --yes
+
+kops get clusters $NAME --state $KOPS_STATE_STORE -o yaml > cluster-config.yaml
+kops replace -f cluster-config.yaml --state $KOPS_STATE_STORE
+kops replace -f cluster-config.yaml --state $KOPS_STATE_STORE
+kops update cluster --state $KOPS_STATE_STORE --name $NAME --yes
+kops edit ig nodes
+
+
+For new kops, gp2 should not be the default storage class.
+kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+
+Mounting efs
+sudo mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-e3c0349b.efs.us-east-2.amazonaws.com:/ efs
+
+Create docker secret in kubernetes
+kubectl create -n jhub secret docker-registry cadrecred --docker-server=https://index.docker.io/v1/ --docker-username=cadreit --docker-password=LIBRARYS3cr3t --docker-email=cadreit@iu.edu
+
+apache reverse proxy 
+        <Location /jupyter/>
+                # preserve Host header to avoid cross-origin problems
+                ProxyPreserveHost on
+                # proxy to JupyterHub
+                ProxyPass http://a82e52a7126ec4a1f80907cad3516bd2-914894071.us-east-2.elb.amazonaws.com/jupyter/
+                ProxyPassReverse http://a82e52a7126ec4a1f80907cad3516bd2-914894071.us-east-2.elb.amazonaws.com/jupyter/
+        </Location>
+        <LocationMatch "/jupyter/(user/[^/]*)/(api/kernels/[^/]+/channels|terminals/websocket)(.*)">
+                ProxyPassMatch ws://a82e52a7126ec4a1f80907cad3516bd2-914894071.us-east-2.elb.amazonaws.com/jupyter/$1/$2$3
+                ProxyPassReverse ws://a82e52a7126ec4a1f80907cad3516bd2-914894071.us-east-2.elb.amazonaws.com/jupyter/$1/$2$3
+        </LocationMatch>
+        
+Update helm chart for jupyterhub
+helm upgrade --cleanup-on-fail   --install $RELEASE jupyterhub/jupyterhub   --namespace $NAMESPACE   --create-namespace   --version=0.10.6   --values config.yaml
+
+kubectl
+kubectl logs hub-fcddf9696-brqh7
+kubectl get pods
+kubectl apply -f deployment-scale.yaml 
+kubectl get pods | grep Pending | wc -l
+kubectl delete deployment nginx-deployment
+kubectl get nodes
+kubectl -n jhub get events --sort-by='{.lastTimestamp}'
+kubectl describe node ip-10-0-16-206.us-east-2.compute.internal
+kubectl describe node ip-10-0-16-206.us-east-2.compute.internal | grep Taints
+kubectl get storageclass
+
+
+autoscaler
+kubectl apply -f cluster-autoscaler-one-asg.yaml
