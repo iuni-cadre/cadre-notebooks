@@ -1,0 +1,4 @@
+export NAME=jhub-ohio.k8s.local
+export KOPS_STATE_STORE=s3://cadre-jhub-ohio-config
+
+kops create cluster --cloud aws --name $NAME --state $KOPS_STATE_STORE --node-count 2 --zones "$ZONES" --authorization RBAC --node-size m4.xlarge --master-size m4.large --ssh-public-key ~/.ssh/id_rsa.pub --topology=private --networking=weave --associate-public-ip=false --vpc vpc-05a34590a22917f9f --node-volume-size 128 --yes
