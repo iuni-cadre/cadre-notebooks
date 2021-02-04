@@ -49,4 +49,12 @@ kubectl get storageclass
 
 
 autoscaler
-kubectl apply -f cluster-autoscaler-one-asg.yaml
+https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md
+make sure autoscaler version compatible with kubernetes server version
+make sure tags are correctly specified in the aws auto-scaling-group and node instance group config (kops ig edit nodes)
+shoudl deployed in kube-system namespace
+kubectl apply -f cluster-autoscaler-autodiscover.yaml
+
+Test autoscaling works
+Deploy nginx pods :  kubectl apply -f deployment-scale.yaml
+Delete nginx pods : kubectl delete deployment nginx-deployment
