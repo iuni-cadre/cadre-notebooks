@@ -7,3 +7,6 @@ Binder test [![Binder](http://52.191.170.48/badge_logo.svg)](http://52.191.170.4
 
 A binder backup on Azure for reproducibility Demo
 [![Binder](https://mybinder.org/badge_logo.svg)](http://52.191.170.48/v2/gh/iuni-cadre/ReproducibilityDemo.git/master)
+
+Create docker image for notebooks
+https://github.com/iuni-cadre/Fellow2-citation-cascades/blob/master/jupyterSetup/dockerBash
