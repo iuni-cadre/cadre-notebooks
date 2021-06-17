@@ -1,0 +1,2 @@
+ If you are getting error listing nodes in cluster: Unauthorized error when running kubectl commands, try this https://serverfault.com/questions/1053613/kubectl-error-you-must-be-logged-in-to-the-server-unauthorized-when-using-kube
+ kops export kubecfg --admin
